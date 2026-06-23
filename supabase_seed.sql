@@ -1,0 +1,2 @@
+-- No direct SQL seed possible without user IDs, but we can provide the structure
+-- We will handle seeding through the UI for the first admin or provide instructions
