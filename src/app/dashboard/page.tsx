@@ -3,10 +3,12 @@ import { redirect } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Activity, CheckCircle2, Clock, Users, AlertCircle } from "lucide-react";
 import { ActivityList } from "@/components/activities/activity-list";
+import { cookies } from "next/headers";
 
 export default async function DashboardPage() {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
+    const cookieStore = await cookies();
 
     if (!user) {
         return redirect("/login");
@@ -18,6 +20,10 @@ export default async function DashboardPage() {
         .select("role, division")
         .eq("id", user.id)
         .single();
+
+    // Override division if PIN login (detected via cookie)
+    const guestDivision = cookieStore.get("posko_profile_division")?.value;
+    const currentDivision = guestDivision ? decodeURIComponent(guestDivision) : profile?.division;
 
     const isAdmin = profile?.role === "admin";
 
@@ -62,14 +68,14 @@ export default async function DashboardPage() {
         },
         {
             title: "Divisi",
-            value: isAdmin ? "5" : profile?.division,
+            value: isAdmin ? "5" : currentDivision,
             icon: Users,
             description: isAdmin ? "Total divisi aktif" : "Divisi Anda",
         },
     ];
 
     return (
-        <div className="flex-1 space-y-8 p-8 pt-6">
+        <div className="flex-1 space-y-6 p-4 md:p-8 pt-4 md:pt-6">
             <div className="flex items-center justify-between space-y-2">
                 <div>
                     <h2 className="text-3xl font-bold tracking-tight font-outfit text-primary">Dashboard</h2>

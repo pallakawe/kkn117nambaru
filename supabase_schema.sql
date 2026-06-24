@@ -31,6 +31,15 @@ CREATE TABLE IF NOT EXISTS public.activities (
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.activities ENABLE ROW LEVEL SECURITY;
 
+-- Clear existing policies if any
+DROP POLICY IF EXISTS "Public profiles are viewable by everyone." ON public.profiles;
+DROP POLICY IF EXISTS "Users can update own profile." ON public.profiles;
+DROP POLICY IF EXISTS "Admin can do everything on activities" ON public.activities;
+DROP POLICY IF EXISTS "Divisi can view activities of their own division" ON public.activities;
+DROP POLICY IF EXISTS "Divisi can insert activities for their own division" ON public.activities;
+DROP POLICY IF EXISTS "Divisi can update own activities if not verified" ON public.activities;
+DROP POLICY IF EXISTS "Divisi can delete own activities if not verified" ON public.activities;
+
 -- Profiles Policies
 CREATE POLICY "Public profiles are viewable by everyone." ON public.profiles
     FOR SELECT USING (true);

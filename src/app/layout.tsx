@@ -14,8 +14,8 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: "Sistem Administrasi Posko KKN 117",
-  description: "Dukumentasi resmi seluruh kegiatan Posko KKN 117",
+  title: "Sistem Logbook Harian KKN 117 Nambaru",
+  description: "Dokumentasi resmi seluruh kegiatan Posko KKN 117 Nambaru",
 };
 
 export default function RootLayout({

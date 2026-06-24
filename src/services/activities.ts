@@ -17,18 +17,24 @@ export async function createActivity(activity: any) {
 
     if (!user) throw new Error("Not authenticated");
 
-    // Get user profile for division
-    const { data: profile } = await supabase
-        .from("profiles")
-        .select("division")
-        .eq("id", user.id)
-        .single();
+    // Jika divisi sudah ada di objek activity (dikirim dari form), gunakan itu.
+    // Jika tidak ada, baru ambil dari profil auth user (untuk Admin).
+    let finalDivision = activity.division;
+
+    if (!finalDivision) {
+        const { data: profile } = await supabase
+            .from("profiles")
+            .select("division")
+            .eq("id", user.id)
+            .single();
+        finalDivision = profile?.division;
+    }
 
     const { data, error } = await supabase
         .from("activities")
         .insert([{
             ...activity,
-            division: profile?.division,
+            division: finalDivision,
             created_by: user.id
         }])
         .select()

@@ -9,16 +9,16 @@ export default function LoginPage() {
 
             <div className="w-full max-w-md z-10">
                 <div className="flex flex-col items-center mb-8 space-y-2">
-                    <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center shadow-lg shadow-primary/20 rotate-3 transform transition-transform hover:rotate-0">
-                        <span className="text-white text-2xl font-bold font-outfit">117</span>
+                    <div className="w-16 h-16 rounded-2xl overflow-hidden shadow-lg rotate-3 transform transition-transform hover:rotate-0">
+                        <img src="/logo kkn.png" alt="Logo KKN 117" className="w-full h-full object-cover" />
                     </div>
-                    <h1 className="text-2xl font-bold font-outfit text-slate-800 tracking-tight">Sistem Administrasi Posko</h1>
+                    <h1 className="text-2xl font-bold font-outfit text-slate-800 tracking-tight">Sistem Logbook Harian KKN 117 Nambaru</h1>
                 </div>
 
                 <LoginForm />
 
                 <p className="mt-8 text-center text-xs text-slate-400 font-medium uppercase tracking-widest">
-                    KULIAH KERJA NYATA • ANGKATAN 117 • 2026
+                    KULIAH KERJA NYATA • ANGKATAN 117 Nambaru • SISFOR x GIZI
                 </p>
             </div>
         </main>

@@ -16,6 +16,7 @@ import { format } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
 import { Edit, Trash2, Eye, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
+import Link from "next/link";
 
 import { CheckSquare } from "lucide-react";
 import { VerificationDialog } from "@/components/admin/verification-dialog";
@@ -76,6 +77,19 @@ export function ActivityList({ role = "divisi" }: { role?: string }) {
         setIsVerifying(true);
     };
 
+    const handleDelete = async (id: string) => {
+        if (!confirm("Apakah Anda yakin ingin menghapus kegiatan ini?")) return;
+
+        try {
+            const { deleteActivity } = await import("@/services/activities");
+            await deleteActivity(id);
+            toast.success("Kegiatan berhasil dihapus");
+            fetchActivities();
+        } catch (error) {
+            toast.error("Gagal menghapus kegiatan");
+        }
+    };
+
     const getStatusColor = (status: string) => {
         switch (status) {
             case "Terverifikasi":
@@ -93,7 +107,7 @@ export function ActivityList({ role = "divisi" }: { role?: string }) {
     }
 
     return (
-        <div className="space-y-4">
+        <div className="space-y-4 w-full">
             {role === "admin" && (
                 <ActivityFilters
                     onSearchChange={setSearch}
@@ -102,7 +116,7 @@ export function ActivityList({ role = "divisi" }: { role?: string }) {
                 />
             )}
 
-            <div className="bg-white rounded-xl shadow-sm overflow-hidden border">
+            <div className="bg-white rounded-xl shadow-sm overflow-hidden border overflow-x-auto">
                 <Table>
                     <TableHeader className="bg-slate-50">
                         <TableRow>
@@ -146,33 +160,36 @@ export function ActivityList({ role = "divisi" }: { role?: string }) {
                                     </TableCell>
                                     <TableCell className="text-right">
                                         <div className="flex justify-end gap-2">
-                                            <Button
-                                                variant="ghost"
-                                                size="icon"
-                                                className="h-8 w-8 text-slate-400"
-                                                title="Lihat Detail"
-                                            >
-                                                <Eye className="h-4 w-4" />
-                                            </Button>
-
-                                            {role === "admin" && (
+                                            {/* Detail tetap ada untuk semua (Admin & Pengurus) */}
+                                            <Link href={`/dashboard/activities/${activity.id}`}>
                                                 <Button
                                                     variant="ghost"
                                                     size="icon"
-                                                    className="h-8 w-8 text-primary"
-                                                    title="Verifikasi"
-                                                    onClick={() => handleVerify(activity)}
+                                                    className="h-8 w-8 text-slate-400"
+                                                    title="Lihat Detail"
                                                 >
-                                                    <CheckSquare className="h-4 w-4" />
+                                                    <Eye className="h-4 w-4" />
                                                 </Button>
-                                            )}
+                                            </Link>
 
-                                            {role === "divisi" && activity.verification_status === "Belum Diverifikasi" && (
+                                            {role === "admin" && (
                                                 <>
-                                                    <Button variant="ghost" size="icon" className="h-8 w-8 text-primary">
-                                                        <Edit className="h-4 w-4" />
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        className="h-8 w-8 text-primary"
+                                                        title="Verifikasi"
+                                                        onClick={() => handleVerify(activity)}
+                                                    >
+                                                        <CheckSquare className="h-4 w-4" />
                                                     </Button>
-                                                    <Button variant="ghost" size="icon" className="h-8 w-8 text-red-500">
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        className="h-8 w-8 text-red-500"
+                                                        title="Hapus"
+                                                        onClick={() => handleDelete(activity.id)}
+                                                    >
                                                         <Trash2 className="h-4 w-4" />
                                                     </Button>
                                                 </>

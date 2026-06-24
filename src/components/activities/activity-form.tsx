@@ -29,7 +29,6 @@ export function ActivityForm() {
         location: "",
         description: "",
         constraints: "",
-        documentation_link: "",
         pic_id: "", // This should be the UUID from profiles table
     });
 
@@ -40,11 +39,15 @@ export function ActivityForm() {
 
     useEffect(() => {
         async function getProfile() {
+            // Cek apakah login via PIN (Anggota)
+            const localProfileId = localStorage.getItem("posko_profile_id");
+            const localProfileName = localStorage.getItem("posko_profile_name");
+
             const { data: { user } } = await supabase.auth.getUser();
             if (user) {
                 const { data: profile } = await supabase
                     .from("profiles")
-                    .select("division")
+                    .select("id, full_name, division")
                     .eq("id", user.id)
                     .single();
 
@@ -52,13 +55,23 @@ export function ActivityForm() {
                     setDivision(profile.division as Division);
                     setPics(PICS_BY_DIVISION[profile.division as Division] || []);
 
-                    // Fetch all profiles in this division for UUIDs
+                    // Ambil daftar profil untuk dropdown (Hapus filter email agar semua PIC terbaca)
                     const { data: profiles } = await supabase
                         .from("profiles")
-                        .select("id, full_name")
-                        .eq("division", profile.division);
-
+                        .select("id, full_name");
                     setAvailableProfiles(profiles || []);
+
+                    // Jika login via PIN, otomatis set PIC ke dirinya sendiri
+                    if (localProfileId && localProfileName) {
+                        const localDivision = localStorage.getItem("posko_profile_division") as Division;
+                        if (localDivision) {
+                            setDivision(localDivision);
+                            setPics(PICS_BY_DIVISION[localDivision] || []);
+                        }
+
+                        setSelectedPicName(localProfileName);
+                        setFormData(prev => ({ ...prev, pic_id: localProfileId }));
+                    }
                 }
             }
         }
@@ -70,18 +83,27 @@ export function ActivityForm() {
         setLoading(true);
 
         try {
-            // Find the profile ID for the selected PIC name
-            const picProfile = availableProfiles.find(p => p.full_name === selectedPicName);
+            // Jika login via PIN, kita sudah punya ID pastinya di localStorage
+            const localProfileId = localStorage.getItem("posko_profile_id");
+            let finalPicId = "";
 
-            if (!picProfile) {
-                toast.error("PIC tidak valid");
-                setLoading(false);
-                return;
+            if (localProfileId) {
+                finalPicId = localProfileId;
+            } else {
+                // Jika login Admin/Biasa, cari berdasarkan nama yang dipilih
+                const picProfile = availableProfiles.find(p => p.full_name === selectedPicName);
+                if (!picProfile) {
+                    toast.error("PIC tidak valid");
+                    setLoading(false);
+                    return;
+                }
+                finalPicId = picProfile.id;
             }
 
             await createActivity({
                 ...formData,
-                pic_id: picProfile.id,
+                division, // Pastikan divisi dari state dikirim ke database
+                pic_id: finalPicId,
             });
 
             toast.success("Kegiatan berhasil ditambahkan");
@@ -142,7 +164,12 @@ export function ActivityForm() {
                 </div>
                 <div className="space-y-2">
                     <Label htmlFor="pic">Pelaksana (PIC)</Label>
-                    <Select onValueChange={setSelectedPicName} required>
+                    <Select
+                        onValueChange={setSelectedPicName}
+                        value={selectedPicName}
+                        disabled={!!localStorage.getItem("posko_profile_id")}
+                        required
+                    >
                         <SelectTrigger>
                             <SelectValue placeholder="Pilih PIC" />
                         </SelectTrigger>
@@ -199,16 +226,6 @@ export function ActivityForm() {
                 />
             </div>
 
-            <div className="space-y-2">
-                <Label htmlFor="documentation_link">Link Dokumentasi (Google Drive)</Label>
-                <Input
-                    id="documentation_link"
-                    type="url"
-                    placeholder="https://drive.google.com/..."
-                    value={formData.documentation_link}
-                    onChange={(e) => setFormData({ ...formData, documentation_link: e.target.value })}
-                />
-            </div>
 
             <Button type="submit" className="w-full bg-primary py-6" disabled={loading}>
                 {loading ? <Loader2 className="animate-spin mr-2" /> : "Simpan Kegiatan"}
