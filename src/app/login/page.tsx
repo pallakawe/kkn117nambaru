@@ -4,19 +4,19 @@ export default function LoginPage() {
     return (
         <main className="min-h-screen w-full flex items-center justify-center p-4 relative overflow-hidden">
             {/* Split Background Images */}
-            <div className="absolute inset-0 flex">
+            <div className="absolute inset-0 flex flex-col md:flex-row">
                 <div
-                    className="w-1/2 h-full bg-contain bg-no-repeat bg-center bg-white transition-all duration-700 hover:opacity-90"
+                    className="flex-1 h-1/2 md:h-full bg-cover bg-[center_top_10%] md:bg-contain md:bg-no-repeat md:bg-center bg-white transition-all duration-700"
                     style={{ backgroundImage: "url('/team-black.jpg')" }}
                 />
                 <div
-                    className="w-1/2 h-full bg-contain bg-no-repeat bg-center bg-white transition-all duration-700 hover:opacity-90"
+                    className="flex-1 h-1/2 md:h-full bg-cover bg-[center_top_10%] md:bg-contain md:bg-no-repeat md:bg-center bg-white transition-all duration-700"
                     style={{ backgroundImage: "url('/team-blue.jpg')" }}
                 />
             </div>
 
             {/* Overlay Gradient */}
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/40 via-black/50 to-primary/40 backdrop-blur-[2px]" />
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-black/30 to-primary/20 backdrop-blur-[1px]" />
 
             <div className="w-full max-w-md z-10 py-10">
                 <div className="flex flex-col items-center mb-6 space-y-3">
