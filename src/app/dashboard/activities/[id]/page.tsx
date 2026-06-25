@@ -3,7 +3,7 @@ import { redirect, notFound } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Calendar, Clock, MapPin, User, Users, CheckCircle2, AlertCircle, FileText } from "lucide-react";
+import { ArrowLeft, Calendar, Clock, MapPin, User, Users, CheckCircle2, AlertCircle, FileText, ExternalLink } from "lucide-react";
 import Link from "next/link";
 import { format } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
@@ -126,6 +126,22 @@ export default async function ActivityDetailPage({ params }: PageProps) {
                             <p className="text-sm text-slate-700 bg-amber-50 rounded-lg p-4 leading-relaxed whitespace-pre-wrap">
                                 {activity.constraints}
                             </p>
+                        </div>
+                    )}
+
+                    {/* Dokumentasi */}
+                    {activity.documentation_link && (
+                        <div className="space-y-2 border-t pt-4">
+                            <h3 className="font-semibold text-sm">Dokumentasi</h3>
+                            <a
+                                href={activity.documentation_link}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-2 text-primary hover:underline text-sm font-medium bg-primary/5 p-3 rounded-lg w-full md:w-auto transition-colors"
+                            >
+                                <ExternalLink className="h-4 w-4" />
+                                Buka Link Google Drive / Foto
+                            </a>
                         </div>
                     )}
 

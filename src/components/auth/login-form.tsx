@@ -119,13 +119,13 @@ export function LoginForm() {
 
     return (
         <div className="flex flex-col items-center w-full">
-            <Card className="w-full max-w-md border-none shadow-2xl bg-white/90 backdrop-blur-md overflow-hidden">
-                <div className="flex w-full bg-slate-50 border-b">
+            <Card className="w-full max-w-md border border-white/20 shadow-2xl bg-white/70 backdrop-blur-xl overflow-hidden rounded-3xl">
+                <div className="flex w-full bg-white/40 border-b border-white/20 backdrop-blur-sm">
                     <button
                         onClick={() => setMode("admin")}
                         className={cn(
-                            "flex-1 flex items-center justify-center py-4 text-sm font-semibold transition-all",
-                            mode === "admin" ? "bg-white text-primary border-b-2 border-primary" : "text-slate-400 hover:text-slate-600"
+                            "flex-1 flex items-center justify-center py-5 text-sm font-bold transition-all",
+                            mode === "admin" ? "bg-white/60 text-primary border-b-2 border-primary" : "text-slate-500 hover:text-primary hover:bg-white/20"
                         )}
                     >
                         <ShieldCheck className="w-4 h-4 mr-2" />
@@ -134,8 +134,8 @@ export function LoginForm() {
                     <button
                         onClick={() => setMode("member")}
                         className={cn(
-                            "flex-1 flex items-center justify-center py-4 text-sm font-semibold transition-all",
-                            mode === "member" ? "bg-white text-primary border-b-2 border-primary" : "text-slate-400 hover:text-slate-600"
+                            "flex-1 flex items-center justify-center py-5 text-sm font-bold transition-all",
+                            mode === "member" ? "bg-white/60 text-primary border-b-2 border-primary" : "text-slate-500 hover:text-primary hover:bg-white/20"
                         )}
                     >
                         <UserCircle className="w-4 h-4 mr-2" />
@@ -234,7 +234,7 @@ export function LoginForm() {
             </Card>
 
             {/* Panduan Penggunaan Section */}
-            <Card className="w-full max-w-md mt-6 border-none shadow-xl bg-white/80 backdrop-blur-md overflow-hidden animate-in fade-in slide-in-from-bottom-5 duration-700 delay-200 text-left">
+            <Card className="w-full max-w-md mt-6 border border-white/20 shadow-xl bg-white/60 backdrop-blur-xl overflow-hidden animate-in fade-in slide-in-from-bottom-5 duration-700 delay-200 text-left rounded-3xl">
                 <CardHeader className="pb-3 px-6">
                     <div className="flex items-center gap-2">
                         <div className="p-2 bg-primary/10 rounded-lg">
@@ -257,7 +257,7 @@ export function LoginForm() {
                             <div className="flex-none w-6 h-6 rounded-full bg-primary text-white flex items-center justify-center text-xs font-bold mt-0.5">2</div>
                             <div className="text-sm">
                                 <p className="font-semibold text-slate-800">Catat Logbook</p>
-                                <p className="text-slate-600 leading-relaxed">Klik menu <b>"Tambah Kegiatan"</b> di dashboard. Isi uraian kegiatan harian Anda dengan lengkap.</p>
+                                <p className="text-slate-600 leading-relaxed">Klik menu <b>"Tambah Kegiatan"</b>. Isi uraian kegiatan dan tempelkan <b>Link Google Drive</b> berisi foto/bukti kegiatan.</p>
                             </div>
                         </div>
 

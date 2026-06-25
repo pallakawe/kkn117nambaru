@@ -4,6 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Activity, CheckCircle2, Clock, Users, AlertCircle } from "lucide-react";
 import { ActivityList } from "@/components/activities/activity-list";
 import { cookies } from "next/headers";
+import { StatsGrid } from "@/components/dashboard/stats-grid";
+import { Division } from "@/lib/constants";
 
 export default async function DashboardPage() {
     const supabase = await createClient();
@@ -46,31 +48,43 @@ export default async function DashboardPage() {
         .select("*", { count: 'exact', head: true })
         .eq("verification_status", "Terverifikasi");
 
+    const { data: divisionStats } = await supabase
+        .from("activities")
+        .select("division");
+
+    // Hitung jumlah per divisi
+    const activityCounts = divisionStats?.reduce((acc: any, curr: any) => {
+        acc[curr.division] = (acc[curr.division] || 0) + 1;
+        return acc;
+    }, {}) || {};
+
     const stats = [
         {
             title: "Total Kegiatan",
             value: totalActivities || "0",
-            icon: Activity,
+            icon: "Activity",
             description: "Seluruh kegiatan terdaftar",
         },
         {
             title: "Hari Ini",
             value: todayActivities || "0",
-            icon: Clock,
+            icon: "Clock",
             description: "Kegiatan baru hari ini",
         },
         {
             title: isAdmin ? "Butuh Verifikasi" : "Terverifikasi",
             value: isAdmin ? (pendingVerification || "0") : (verifiedActivities || "0"),
-            icon: isAdmin ? AlertCircle : CheckCircle2,
+            icon: isAdmin ? "AlertCircle" : "CheckCircle2",
             description: isAdmin ? "Menunggu evaluasi Anda" : "Data resmi posko",
             color: isAdmin && pendingVerification ? "text-amber-500" : "text-muted-foreground"
         },
         {
             title: "Divisi",
             value: isAdmin ? "5" : currentDivision,
-            icon: Users,
+            icon: "Users",
             description: isAdmin ? "Total divisi aktif" : "Divisi Anda",
+            isClickable: isAdmin,
+            data: activityCounts
         },
     ];
 
@@ -85,22 +99,7 @@ export default async function DashboardPage() {
                 </div>
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                {stats.map((stat) => (
-                    <Card key={stat.title} className="hover:shadow-md transition-shadow border-none shadow-sm">
-                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>
-                            <stat.icon className={`h-4 w-4 ${stat.color || 'text-muted-foreground'}`} />
-                        </CardHeader>
-                        <CardContent>
-                            <div className="text-2xl font-bold text-slate-800">{stat.value}</div>
-                            <p className="text-xs text-muted-foreground mt-1">
-                                {stat.description}
-                            </p>
-                        </CardContent>
-                    </Card>
-                ))}
-            </div>
+            <StatsGrid stats={stats} />
 
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
                 <Card className="col-span-12 border-none shadow-sm">

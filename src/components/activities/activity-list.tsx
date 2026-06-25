@@ -14,11 +14,9 @@ import { Button } from "@/components/ui/button";
 import { getActivities } from "@/services/activities";
 import { format } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
-import { Edit, Trash2, Eye, ExternalLink } from "lucide-react";
+import { Edit, Trash2, Eye, ExternalLink, CheckSquare } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
-
-import { CheckSquare } from "lucide-react";
 import { VerificationDialog } from "@/components/admin/verification-dialog";
 import { ActivityFilters } from "@/components/admin/activity-filters";
 
@@ -116,7 +114,7 @@ export function ActivityList({ role = "divisi" }: { role?: string }) {
                 />
             )}
 
-            <div className="bg-white rounded-xl shadow-sm overflow-hidden border overflow-x-auto">
+            <div className="bg-white rounded-xl shadow-sm border overflow-x-auto">
                 <Table>
                     <TableHeader className="bg-slate-50">
                         <TableRow>
@@ -160,7 +158,23 @@ export function ActivityList({ role = "divisi" }: { role?: string }) {
                                     </TableCell>
                                     <TableCell className="text-right">
                                         <div className="flex justify-end gap-2">
-                                            {/* Detail tetap ada untuk semua (Admin & Pengurus) */}
+                                            {activity.documentation_link && (
+                                                <a
+                                                    href={activity.documentation_link}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                >
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        className="h-8 w-8 text-blue-500"
+                                                        title="Buka Dokumentasi"
+                                                    >
+                                                        <ExternalLink className="h-4 w-4" />
+                                                    </Button>
+                                                </a>
+                                            )}
+
                                             <Link href={`/dashboard/activities/${activity.id}`}>
                                                 <Button
                                                     variant="ghost"

@@ -29,17 +29,15 @@ export function ActivityForm() {
         location: "",
         description: "",
         constraints: "",
+        documentation_link: "",
         pic_id: "", // This should be the UUID from profiles table
     });
 
-    // For simplicity path, we'll fetch profiles matching PICS names later
-    // For now, we'll simulate PIC selection with names and resolve to UUID
     const [selectedPicName, setSelectedPicName] = useState("");
     const [availableProfiles, setAvailableProfiles] = useState<any[]>([]);
 
     useEffect(() => {
         async function getProfile() {
-            // Cek apakah login via PIN (Anggota)
             const localProfileId = localStorage.getItem("posko_profile_id");
             const localProfileName = localStorage.getItem("posko_profile_name");
 
@@ -55,13 +53,11 @@ export function ActivityForm() {
                     setDivision(profile.division as Division);
                     setPics(PICS_BY_DIVISION[profile.division as Division] || []);
 
-                    // Ambil daftar profil untuk dropdown (Hapus filter email agar semua PIC terbaca)
                     const { data: profiles } = await supabase
                         .from("profiles")
                         .select("id, full_name");
                     setAvailableProfiles(profiles || []);
 
-                    // Jika login via PIN, otomatis set PIC ke dirinya sendiri
                     if (localProfileId && localProfileName) {
                         const localDivision = localStorage.getItem("posko_profile_division") as Division;
                         if (localDivision) {
@@ -83,14 +79,12 @@ export function ActivityForm() {
         setLoading(true);
 
         try {
-            // Jika login via PIN, kita sudah punya ID pastinya di localStorage
             const localProfileId = localStorage.getItem("posko_profile_id");
             let finalPicId = "";
 
             if (localProfileId) {
                 finalPicId = localProfileId;
             } else {
-                // Jika login Admin/Biasa, cari berdasarkan nama yang dipilih
                 const picProfile = availableProfiles.find(p => p.full_name === selectedPicName);
                 if (!picProfile) {
                     toast.error("PIC tidak valid");
@@ -102,7 +96,7 @@ export function ActivityForm() {
 
             await createActivity({
                 ...formData,
-                division, // Pastikan divisi dari state dikirim ke database
+                division,
                 pic_id: finalPicId,
             });
 
@@ -226,6 +220,16 @@ export function ActivityForm() {
                 />
             </div>
 
+            <div className="space-y-2">
+                <Label htmlFor="documentation_link">Link Dokumentasi (Google Drive / Foto)</Label>
+                <Input
+                    id="documentation_link"
+                    placeholder="https://drive.google.com/..."
+                    value={formData.documentation_link}
+                    onChange={(e) => setFormData({ ...formData, documentation_link: e.target.value })}
+                />
+                <p className="text-[10px] text-slate-400 italic">Masukkan link folder atau file dokumentasi kegiatan ini.</p>
+            </div>
 
             <Button type="submit" className="w-full bg-primary py-6" disabled={loading}>
                 {loading ? <Loader2 className="animate-spin mr-2" /> : "Simpan Kegiatan"}
