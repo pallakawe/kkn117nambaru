@@ -20,7 +20,7 @@ import Link from "next/link";
 import { VerificationDialog } from "@/components/admin/verification-dialog";
 import { ActivityFilters } from "@/components/admin/activity-filters";
 
-export function ActivityList({ role = "divisi" }: { role?: string }) {
+export function ActivityList({ role = "divisi", userDivision }: { role?: string, userDivision?: string }) {
     const [activities, setActivities] = useState<any[]>([]);
     const [filteredActivities, setFilteredActivities] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
@@ -65,6 +65,11 @@ export function ActivityList({ role = "divisi" }: { role?: string }) {
 
         if (statusFilter !== "all") {
             result = result.filter(a => a.verification_status === statusFilter);
+        }
+
+        // Filter berdasarkan divisi pengguna jika bukan admin
+        if (role !== "admin" && userDivision) {
+            result = result.filter(a => a.division?.toLowerCase() === userDivision.toLowerCase());
         }
 
         setFilteredActivities(result);

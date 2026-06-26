@@ -27,7 +27,9 @@ export default async function DashboardPage() {
     const guestDivision = cookieStore.get("posko_profile_division")?.value;
     const currentDivision = guestDivision ? decodeURIComponent(guestDivision) : profile?.division;
 
-    const isAdmin = profile?.role === "admin";
+    // Jika masuk lewat PIN, kita anggap perannya adalah 'divisi' agar terfilter
+    const activeRole = guestDivision ? "divisi" : (profile?.role || "divisi");
+    const isAdmin = activeRole === "admin";
 
     const { count: totalActivities } = await supabase
         .from("activities")
@@ -107,7 +109,7 @@ export default async function DashboardPage() {
                         <CardTitle>Aktivitas Terbaru</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <ActivityList role={profile?.role} />
+                        <ActivityList role={activeRole} userDivision={currentDivision} />
                     </CardContent>
                 </Card>
             </div>

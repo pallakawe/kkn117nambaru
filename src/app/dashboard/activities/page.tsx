@@ -3,6 +3,7 @@ import { ActivityList } from "@/components/activities/activity-list";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Plus } from "lucide-react";
+import { cookies } from "next/headers";
 
 export default async function ActivitiesPage() {
     const supabase = await createClient();
@@ -10,11 +11,17 @@ export default async function ActivitiesPage() {
 
     const { data: profile } = await supabase
         .from("profiles")
-        .select("role")
+        .select("role, division")
         .eq("id", user!.id)
         .single();
 
-    const isAdmin = profile?.role === "admin";
+    const cookieStore = await cookies();
+    const guestDivision = cookieStore.get("posko_profile_division")?.value;
+    const currentDivision = guestDivision ? decodeURIComponent(guestDivision) : profile?.division;
+
+    // Jika masuk lewat PIN, kita anggap perannya adalah 'divisi' agar terfilter
+    const activeRole = guestDivision ? "divisi" : (profile?.role || "divisi");
+    const isAdmin = activeRole === "admin";
 
     return (
         <div className="flex-1 space-y-8 p-8 pt-6">
@@ -34,7 +41,7 @@ export default async function ActivitiesPage() {
                 )}
             </div>
 
-            <ActivityList role={profile?.role} />
+            <ActivityList role={activeRole} userDivision={currentDivision} />
         </div>
     );
 }

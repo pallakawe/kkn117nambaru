@@ -224,7 +224,7 @@ export function ActivityForm() {
                 <Label htmlFor="documentation_link">Link Dokumentasi (Google Drive / Foto)</Label>
                 <Input
                     id="documentation_link"
-                    placeholder="https://drive.google.com/..."
+                    placeholder="https://drive.google.com/drive/folders/1IfSknxBacnJm6dYo4AuYKS4QEWqOx3Hq?usp=sharing"
                     value={formData.documentation_link}
                     onChange={(e) => setFormData({ ...formData, documentation_link: e.target.value })}
                 />
